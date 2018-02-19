@@ -1,2 +1,7 @@
 ---
 # defaults file for ansible-role-minerstat
+
+gpu: "" # nvidia or amd
+minerstat_install_path: /opt/minerstat-linux
+minerstat_accesskey: "{{ vault_minerstat_accesskey }}"
+minerstat_worker: "{{ vault_minerstat_worker }}"

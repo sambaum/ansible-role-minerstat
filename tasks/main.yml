@@ -1,2 +1,113 @@
 ---
 # tasks file for ansible-role-minerstat
+
+- name: add repo ppa:ubuntu-toolchain-r/test
+  apt_repository:
+    repo: ppa:ubuntu-toolchain-r/test
+
+- name: add repo ppa:graphics-drivers/ppa
+  apt_repository:
+    repo: ppa:graphics-drivers/ppa
+
+- name: install dependencies
+  package:
+    name: "{{ item }}"
+  with_items:
+    - git
+    - screen
+    - nodejs
+    - nodejs-legacy
+    - unzip
+    - npm
+    - ocl-icd-opencl-dev
+    - libcurl3:i386
+    - libcurl4-openssl-dev
+    - libssl-dev
+    - libjansson-dev
+    - libpci-dev
+    - libstdc++6
+
+- name: clone minerstat-linux
+  git:
+    repo: https://github.com/coinscrow/minerstat-linux/
+    dest: "{{ minerstat_install_path }}"
+    update: no
+
+- name: Install node.js packages
+  npm:
+    name: "{{ item }}"
+    path: "{{ minerstat_install_path }}"
+  with_items:
+    - colors
+    - sleep
+    - pump
+    - request
+    - express
+    - sphp
+    - progress
+    - ascii-text-generator
+    - fkill
+    - needle
+    - parse-spawn-args
+    - readline-sync
+
+- name: install nvidia drivers
+  package:
+    name: "{{ item }}"
+  with_items:
+    - nvidia-cuda-toolkit
+  when: gpu == "nvidia"
+  notify:
+    - reboot
+
+- name: update-grub
+  shell: update-grub
+  when: gpu == "nvidia"
+
+- name: nvidia-xconfig
+  shell: nvidia-xconfig -s -a --allow-empty-initial-configuration --cool-bits=28 --registry-dwords="PerfLevelSrc=0x2222" --no-sli --connected-monitor="DFP-0"
+  when: gpu == "nvidia"
+
+- debug:
+    msg: "AMD GPU not yet implemented by role"
+  when: gpu == "amd"
+
+- debug:
+    msg: "No GPU driver installed, gpu variable has to be set"
+  when: gpu != "amd" and gpu != "amd"
+
+- name: configure minerstat
+  blockinfile:
+    path: "{{ minerstat_install_path }}/config.js"
+    marker: "// {mark} ANSIBLE MANAGED BLOCK "
+    block: |
+      global.accesskey = '{{ minerstat_accesskey }}';
+      global.worker = '{{ minerstat_worker }}';
+      global.path = __dirname;
+  notify:
+    - restart_minerstat
+
+- name: add minerstat.service
+  template:
+    src: minerstat.service.ini
+    dest: /lib/systemd/system/minerstat.service
+    mode: 0644
+  become: yes
+  notify:
+    - minerstat_reload_systemd
+    - restart_minerstat
+
+#- name: check if a reboot is required
+#  shell: "[ -f /var/run/reboot-required ]"
+#  failed_when: False
+#  register: reboot_required
+#  changed_when: reboot_required.rc == 0
+#  notify: reboot
+
+# TODO: Alias with zshrc (template)
+
+
+# TODO: Boot time (systemd) or crontab
+
+
+# TODO: Maybe teamviewer, but in different role
