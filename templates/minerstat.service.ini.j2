@@ -3,6 +3,7 @@ Description=minerstat
 After=network.target
 
 [Service]
+WorkingDirectory={{ minerstat_install_path }}
 Type=simple
 ExecStart=/usr/bin/node {{ minerstat_install_path }}/start.js
 Restart=on-failure

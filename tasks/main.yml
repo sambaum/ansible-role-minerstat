@@ -77,19 +77,15 @@
   when: gpu != "amd" and gpu != "amd"
 
 - name: configure minerstat
-  blockinfile:
-    path: "{{ minerstat_install_path }}/config.js"
-    marker: "// {mark} ANSIBLE MANAGED BLOCK "
-    block: |
-      global.accesskey = '{{ minerstat_accesskey }}';
-      global.worker = '{{ minerstat_worker }}';
-      global.path = __dirname;
+  template:
+    src: minerstat.config.js.j2
+    dest: "{{ minerstat_install_path }}/config.xml.j2"
   notify:
     - restart_minerstat
 
 - name: add minerstat.service
   template:
-    src: minerstat.service.ini
+    src: minerstat.service.ini.j2
     dest: /lib/systemd/system/minerstat.service
     mode: 0644
   become: yes
