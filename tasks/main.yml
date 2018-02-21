@@ -79,7 +79,7 @@
 - name: configure minerstat
   template:
     src: minerstat.config.js.j2
-    dest: "{{ minerstat_install_path }}/config.xml.j2"
+    dest: "{{ minerstat_install_path }}/config.js"
   notify:
     - restart_minerstat
 
