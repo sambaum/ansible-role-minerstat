@@ -5,8 +5,9 @@ After=network.target
 [Service]
 WorkingDirectory={{ minerstat_install_path }}
 Type=simple
-ExecStart=/usr/bin/node {{ minerstat_install_path }}/start.js
+ExecStart=/usr/bin/screen -A -m -d -S minerstat-console /usr/bin/node /opt/minerstat-linux/start.js
 Restart=on-failure
+RemainAfterExit=true
 
 [Install]
 WantedBy=multi-user.target
