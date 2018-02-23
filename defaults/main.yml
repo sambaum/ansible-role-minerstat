@@ -5,3 +5,6 @@ gpu: "" # nvidia or amd
 minerstat_install_path: /opt/minerstat-linux
 minerstat_accesskey: "{{ vault_minerstat_accesskey }}"
 minerstat_worker: "{{ vault_minerstat_worker }}"
+minerstat_user: root
+minerstat_group: root
+set_ansible_directory_permissions: false
