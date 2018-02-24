@@ -88,7 +88,7 @@
     path: /etc/ansible
     owner: "{{ minerstat_user }}"
     group: "{{ minerstat_group }}"
-    mode: g+rwx
+    mode: g+rw
     recurse: yes
   when: set_ansible_directory_permissions
 
