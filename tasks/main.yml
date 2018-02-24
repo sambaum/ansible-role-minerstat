@@ -83,11 +83,12 @@
     group: "{{ minerstat_group }}"
     recurse: yes
 
-- name: setting owner and group of ansible directory
+- name: setting permissions of ansible directory
   file:
     path: /etc/ansible
     owner: "{{ minerstat_user }}"
     group: "{{ minerstat_group }}"
+    mode: g+rwx
     recurse: yes
   when: set_ansible_directory_permissions
 
