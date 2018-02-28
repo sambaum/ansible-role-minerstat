@@ -109,16 +109,25 @@
     - minerstat_reload_systemd
     - restart_minerstat
 
-#- name: check if a reboot is required
-#  shell: "[ -f /var/run/reboot-required ]"
-#  failed_when: False
-#  register: reboot_required
-#  changed_when: reboot_required.rc == 0
-#  notify: reboot
 
-# TODO: Alias with zshrc (template)
+- name: install nvidia toolkit 9 for ubuntu 16.04 - base installer
+  apt:
+    deb: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+  when: ansible_distribution_version == '16.04'
 
+- name: install nvidia toolkit 9 for ubuntu 16.04 - add key from developer.download.nvidia.com
+  apt_key:
+    url: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+    state: present
+  when: ansible_distribution_version == '16.04'
 
-# TODO: Boot time (systemd) or crontab
+- name: install nvidia toolkit 9 for ubuntu 16.04 - install cuda
+  apt:
+    name: cuda
+    update_cache: yes
+  when: ansible_distribution_version == '16.04'
 
-
+#- name: install nvidia toolkit 9 for ubuntu 16.04 - install cuda
+#  package:
+#    name: cuda
+#  when: install_nvidia_toolkit_9_for_ubuntu_16_04

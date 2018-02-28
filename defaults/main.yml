@@ -8,3 +8,4 @@ minerstat_worker:
 minerstat_user: root
 minerstat_group: root
 set_ansible_directory_permissions: false
+#install_nvidia_toolkit_9_for_ubuntu_16_04: false
